@@ -10,18 +10,46 @@ const itemCountSpan = document.getElementById('item-count')
 const uncheckedCountSpan = document.getElementById('unchecked-count')
 const todoText = document.getElementById(classNames.TODO_TEXT)
 
+todoText.addEventListener('keyup', function onEvent(e) {
+  if (e.keyCode === 13) {
+      newTodo();
+  }
+});
+
 let itemCount = 0;
+let itemUncheckedCount = 0;
+
+function updateCount(count) {
+
+  itemCount = itemCount + count;
+  itemCountSpan.innerText =  itemCount;  
+}
+
+function updateUncheckedCount(count) {
+
+  itemUncheckedCount= itemUncheckedCount + count;
+  uncheckedCountSpan.innerText = itemUncheckedCount;
+}
 
 let deleteTask = function (){
   
   let itemDeleting = this.parentNode;
-  alert(typeof(itemDeleting))
   let listItens = itemDeleting.parentNode; 
 
   listItens.removeChild(itemDeleting);
 
-  itemCount = itemCount - 1;
-  itemCountSpan.innerText =  itemCount;  
+  updateCount(-1);
+
+  if (!itemDeleting.firstChild.checked)  
+    updateUncheckedCount(-1);
+}
+
+let countUncheck = function(){
+
+  let isChecked = this.checked;
+  
+  if (isChecked) updateUncheckedCount(-1)
+  else updateUncheckedCount(1);
 }
 
 function newTodo() {
@@ -33,6 +61,7 @@ function newTodo() {
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = classNames.TODO_CHECKBOX;
+    checkbox.onclick = countUncheck;
     item.appendChild(checkbox);
 
     let label = document.createElement("label");
@@ -46,11 +75,10 @@ function newTodo() {
 
     list.appendChild(item);
 
-    itemCount = itemCount + 1;
-    itemCountSpan.innerText =  itemCount;  
+    updateCount(1);
+    updateUncheckedCount(1);
 
     todoText.value = '';
-
   }
 
   
